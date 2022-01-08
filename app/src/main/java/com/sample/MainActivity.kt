@@ -8,6 +8,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         finish()
-        RewardUtils.startRewardFlow(this,"")
+        RewardUtils.startRewardFlow(this, "", "")
     }
 }
