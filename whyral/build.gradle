@@ -43,7 +43,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.whyral.lib'
                 artifactId = 'whyral'
-                version = 'v1.0.3'
+                version = 'v1.0.4'
             }
         }
     }
