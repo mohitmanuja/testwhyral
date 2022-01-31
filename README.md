@@ -20,9 +20,19 @@ dependencies {
 }
 ```
 
-**Step 3.**  Start the Whral Sdk by following method 
+**Step 3.**  Start the Whral Sdk by following method if you want to open Activity
 ```xml
-RewardUtils.startRewardFlow(context:Context, authToken:String, userId:String)	
+RewardUtils.startRewardFlow(context:Context, authToken:String, userId:String,isDev:Boolean)
 ```
+OR if you want to open through fragment
+
+```xml
+
+RewardFragment.newInstance(authToken:String, userId:String,isDev:Boolean)
+
+```
+
+Set **isDev->true** to point staging server by default it's false. 
+
 
 **That's it...**
