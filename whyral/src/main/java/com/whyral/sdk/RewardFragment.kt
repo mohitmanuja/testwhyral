@@ -27,7 +27,6 @@ class RewardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         webView = view.findViewById(R.id.web_view)
         progressBar = view.findViewById(R.id.progress)
         init()
@@ -50,15 +49,6 @@ class RewardFragment : Fragment() {
                 webView.visibility = View.VISIBLE
             }
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                request?.url?.run {
-                    view?.loadUrl(this.toString())
-                }
-                return true
-            }
 
         }
         val userId = arguments?.getString(USER_ID) ?: ""
@@ -76,11 +66,10 @@ class RewardFragment : Fragment() {
             if (isDev){
                 setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=stage.terrafin.tech")
             }else{
-                setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=acecredit.in")
+                setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=www.acecredit.in")
             }
             acceptThirdPartyCookies(webView)
         }
-
     }
 
     companion object {
