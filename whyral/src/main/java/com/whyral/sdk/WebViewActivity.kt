@@ -9,11 +9,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import com.whyral.sdk.Utils.getWebURL
+import com.whyral.sdk.Utils.setCookie
 
 
 class WebViewActivity : AppCompatActivity() {
     lateinit var webView: WebView
     lateinit var progressBar: ProgressBar
+    private var isDev: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +58,8 @@ class WebViewActivity : AppCompatActivity() {
         val userId = intent?.getStringExtra(USER_ID) ?: ""
         val authToken = intent?.getStringExtra(TOKEN) ?: ""
         setCookie(Utils.getSessionId(userId, authToken))
-        webView.loadUrl(WEB_URL)
+        isDev = intent?.getBooleanExtra(IS_DEV, false) ?: false
+        webView.loadUrl(getWebURL(isDev))
 
     }
 
@@ -63,7 +67,7 @@ class WebViewActivity : AppCompatActivity() {
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
             acceptCookie()
-            setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=stage.terrafin.tech")
+            setCookie(isDev, sessionId)
             acceptThirdPartyCookies(webView)
         }
 

@@ -11,11 +11,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import com.whyral.sdk.Utils.getWebURL
+import com.whyral.sdk.Utils.setCookie
 
 
 class RewardFragment : Fragment() {
     lateinit var webView: WebView
     lateinit var progressBar: ProgressBar
+    private var isDev: Boolean=false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +57,9 @@ class RewardFragment : Fragment() {
         val userId = arguments?.getString(USER_ID) ?: ""
         val authToken = arguments?.getString(TOKEN) ?: ""
         setCookie(Utils.getSessionId(userId, authToken))
-        webView.loadUrl(WEB_URL)
+
+        isDev = arguments?.getBoolean(IS_DEV) ?: false
+        webView.loadUrl(getWebURL(isDev))
 
     }
 
@@ -62,17 +67,14 @@ class RewardFragment : Fragment() {
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
             acceptCookie()
-            val isDev = arguments?.getBoolean(IS_DEV)?:false
-            if (isDev){
-                setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=stage.terrafin.tech")
-            }else{
-                setCookie(WEB_URL, "whyral-session.id=$sessionId; Domain=www.acecredit.in")
-            }
+            setCookie(isDev, sessionId)
             acceptThirdPartyCookies(webView)
         }
     }
 
     companion object {
+
+        @JvmStatic
         fun newInstance(authToken: String, userId: String, isDev: Boolean): RewardFragment {
             val args = Bundle()
             args.putString(TOKEN, authToken)
