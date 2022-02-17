@@ -56,9 +56,9 @@ class RewardFragment : Fragment() {
         }
         val userId = arguments?.getString(USER_ID) ?: ""
         val authToken = arguments?.getString(TOKEN) ?: ""
+        isDev = arguments?.getBoolean(IS_DEV) ?: false
         setCookie(Utils.getSessionId(userId, authToken))
 
-        isDev = arguments?.getBoolean(IS_DEV) ?: false
         webView.loadUrl(getWebURL(isDev))
 
     }
