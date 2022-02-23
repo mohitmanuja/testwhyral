@@ -1,24 +1,21 @@
 package com.whyral.sdk
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.CookieManager
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.whyral.sdk.Utils.getWebURL
 import com.whyral.sdk.Utils.setCookie
+import com.whyral.sdk.Utils.setWebClient
 
 
 class RewardFragment : Fragment() {
     lateinit var webView: WebView
     lateinit var progressBar: ProgressBar
-    private var isDev: Boolean=false
+    private var isDev: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,40 +33,23 @@ class RewardFragment : Fragment() {
     }
 
     private fun init() {
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
+        isDev = arguments?.getBoolean(IS_DEV) ?: false
+        val userId = arguments?.getString(USER_ID) ?: ""
+        val authToken = arguments?.getString(TOKEN) ?: ""
+
+        webView.setWebClient(
+            context = requireContext(),
+            onPageStarted = {
                 progressBar.visibility = View.VISIBLE
                 webView.visibility = View.GONE
-            }
-
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
+            },
+            onPageFinished = {
                 progressBar.visibility = View.GONE
                 webView.visibility = View.VISIBLE
             }
-
-
-        }
-        val userId = arguments?.getString(USER_ID) ?: ""
-        val authToken = arguments?.getString(TOKEN) ?: ""
-        isDev = arguments?.getBoolean(IS_DEV) ?: false
-        setCookie(Utils.getSessionId(userId, authToken))
-
+        )
+        webView.setCookie(isDev, Utils.getSessionId(userId, authToken))
         webView.loadUrl(getWebURL(isDev))
-
-    }
-
-    private fun setCookie(sessionId: String) {
-        CookieManager.getInstance().apply {
-            setAcceptCookie(true)
-            acceptCookie()
-            setCookie(isDev, sessionId)
-            acceptThirdPartyCookies(webView)
-        }
     }
 
     companion object {

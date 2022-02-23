@@ -1,16 +1,13 @@
 package com.whyral.sdk
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import android.webkit.CookieManager
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.whyral.sdk.Utils.getWebURL
 import com.whyral.sdk.Utils.setCookie
+import com.whyral.sdk.Utils.setWebClient
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -27,50 +24,25 @@ class WebViewActivity : AppCompatActivity() {
         init()
     }
 
-    private fun init() {
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
+    private fun init(){
+        isDev = intent?.getBooleanExtra(IS_DEV, false) ?: false
+        val userId = intent?.getStringExtra(USER_ID) ?: ""
+        val authToken = intent?.getStringExtra(TOKEN) ?: ""
+
+        webView.setWebClient(
+            context = this,
+            onPageStarted = {
                 progressBar.visibility = View.VISIBLE
                 webView.visibility = View.GONE
-            }
-
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
+            },
+            onPageFinished = {
                 progressBar.visibility = View.GONE
                 webView.visibility = View.VISIBLE
             }
+        )
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                request?.url?.run {
-                    view?.loadUrl(this.toString())
-                }
-                return true
-            }
-
-        }
-        val userId = intent?.getStringExtra(USER_ID) ?: ""
-        val authToken = intent?.getStringExtra(TOKEN) ?: ""
-        setCookie(Utils.getSessionId(userId, authToken))
-        isDev = intent?.getBooleanExtra(IS_DEV, false) ?: false
+        webView.setCookie(isDev,Utils.getSessionId(userId, authToken))
         webView.loadUrl(getWebURL(isDev))
-
-    }
-
-    private fun setCookie(sessionId: String) {
-        CookieManager.getInstance().apply {
-            setAcceptCookie(true)
-            acceptCookie()
-            setCookie(isDev, sessionId)
-            acceptThirdPartyCookies(webView)
-        }
-
     }
 
     override fun onBackPressed() {
