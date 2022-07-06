@@ -14,7 +14,7 @@ import android.webkit.WebViewClient
 import org.json.JSONObject
 import java.util.*
 
-const val WEB_URL_TEST = "http://stage.terrafin.tech:3000/"
+const val WEB_URL_TEST = "https://stage.terrafin.tech:3000/"
 const val WEB_URL_PROD = "https://www.acecredit.in:444/"
 object Utils {
 
